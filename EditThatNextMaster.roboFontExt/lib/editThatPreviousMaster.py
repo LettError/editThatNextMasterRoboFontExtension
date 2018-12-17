@@ -133,10 +133,10 @@ def getOtherMaster(nextFont=True, shuffleFont=False):
             prev = fonts[sortedPaths[i-1]]
             nxt = fonts[sortedPaths[(i+1)%len(sortedPaths)]]
             if nextFont:
-                print('next')
+                #print('next')
                 return nxt
             else:
-                print('prev')
+                #print('prev')
                 return prev
 
 def switch(direction=1, shuffle=False):
