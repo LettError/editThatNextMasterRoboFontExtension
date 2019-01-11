@@ -54,7 +54,7 @@ def applySelection(g, pointSelection, compSelection):
             if len(g.contours[ci].points) >= pi + 1:
                 g.contours[ci].points[pi].selected = True
     for ci in compSelection:
-        if len(g.components) >= ci:
+        if g.components and len(g.components) >= ci + 1:
             g.components[ci].selected = True
 
 def getCurrentFontAndWindowFlavor():
@@ -121,7 +121,7 @@ def getOtherMaster(nextFont=True, shuffleFont=False):
         fonts[f.path]=f
     sortedPaths = list(fonts.keys())
     sortedPaths.sort()
-    # 
+    #
     if shuffleFont:
         shufflePaths = sortedPaths[:]
         shufflePaths.remove(cf.path)
@@ -215,7 +215,7 @@ def switch(direction=1, shuffle=False):
         nextWindow.setGlyphViewScale(viewScale)
         nextView.scrollRectToVisible_(viewFrame)
         # maybe the viewframe needs to be seen as a factor of the rect
-        
+
         nextMaster.selection = [s for s in selectedGlyphs if s in nextMaster]
         if nextGlyph is not None:
             applySelection(nextGlyph, selectedPoints, selectedComps)
