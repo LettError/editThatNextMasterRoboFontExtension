@@ -45,9 +45,11 @@
 	<key>html</key>
 	<false/>
 	<key>launchAtStartUp</key>
-	<integer>0</integer>
-	<key></key>
-	<string></string>
+	<integer>1</integer>
+	<key>mainScript</key>
+	<string>startup.py</string>
+	<key>uninstallScript</key>
+	<string>shutdown.py</string>
 	<key>name</key>
 	<string>🔄 EditThat…</string>
 	<key>timeStamp</key>

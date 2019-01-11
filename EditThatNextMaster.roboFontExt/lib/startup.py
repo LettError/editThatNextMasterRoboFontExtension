@@ -1,1 +1,1 @@
-print("install / editThat")
+print("editthatnextmaster install / editThat")
