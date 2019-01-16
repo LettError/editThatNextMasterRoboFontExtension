@@ -102,6 +102,7 @@ def setSpaceCenterWindowPosSize(font):
     rawText = c.getRaw()
     prefix = c.getPre()
     suffix = c.getAfter()
+    gnameSuffix = c.getSuffix()
     size = c.getPointSize()
     w = OpenSpaceCenter(font, newWindow=False)
     new = CurrentSpaceCenterWindow()
@@ -109,6 +110,7 @@ def setSpaceCenterWindowPosSize(font):
     w.setRaw(rawText)
     w.setPre(prefix)
     w.setAfter(suffix)
+    w.setSuffix(gnameSuffix)
     w.setPointSize(size)
 
 def getOtherMaster(nextFont=True, shuffleFont=False):
@@ -146,7 +148,7 @@ def switch(direction=1, shuffle=False):
     if windowType == "FontWindow":
         fontWindow = CurrentFontWindow()
         selectedGlyphs = f.selection
-        currentFontWindowQuery =  fontWindow.getGlyphCollection().getQuery()
+        currentFontWindowQuery = fontWindow.getGlyphCollection().getQuery()
         selectedSmartList = fontWindow.fontOverview.views.smartList.getSelection()
         posSize = fontWindow.window().getPosSize()
         nextWindow = nextMaster.document().getMainWindow()
@@ -224,15 +226,17 @@ def switch(direction=1, shuffle=False):
         rawText = fontWindow.spaceCenter.getRaw()
         prefix = fontWindow.spaceCenter.getPre()
         suffix = fontWindow.spaceCenter.getAfter()
+        gnameSuffix = fontWindow.spaceCenter.getSuffix()
         size = fontWindow.spaceCenter.getPointSize()
 
         nextWindow.spaceCenter.setRaw(rawText)
         nextWindow.spaceCenter.setPre(prefix)
         nextWindow.spaceCenter.setAfter(suffix)
+        nextWindow.spaceCenter.setSuffix(gnameSuffix)
         nextWindow.spaceCenter.setPointSize(size)
 
         for n in dir(nextWindow):
-           print(n)
+            print(n)
 
 if __name__ == "__main__":
     switch(-1)
