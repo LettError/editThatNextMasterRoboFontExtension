@@ -34,6 +34,7 @@ from mojo.roboFont import CurrentFont, CurrentGlyph, AllFonts, OpenWindow, versi
 def copySelection(g):
     pointSelection = []
     compSelection = []
+    anchorSelection = []
     for ci, c in enumerate(g.contours):
         for pi, p in enumerate(c.points):
             if p.selected:
@@ -41,14 +42,19 @@ def copySelection(g):
     for compi, comp in enumerate(g.components):
         if comp.selected:
             compSelection.append(compi)
-    return pointSelection, compSelection
+    for anchori, anchor in enumerate(g.anchors):
+        if anchor.selected:
+            anchorSelection.append(anchori)
+    return pointSelection, compSelection, anchorSelection
 
-def applySelection(g, pointSelection, compSelection):
+def applySelection(g, pointSelection, compSelection, anchorSelection):
     # reset current selected points
     for ci, c in enumerate(g.contours):
         c.selected = False
     for ci, c in enumerate(g.components):
         c.selected = False
+    for ai, a in enumerate(g.anchors):
+        a.selected = False
     for ci, pi in pointSelection:
         if g.contours and len(g.contours) >= ci + 1:
             if len(g.contours[ci].points) >= pi + 1:
@@ -56,6 +62,9 @@ def applySelection(g, pointSelection, compSelection):
     for ci in compSelection:
         if g.components and len(g.components) >= ci + 1:
             g.components[ci].selected = True
+    for ai in anchorSelection:
+        if g.anchors and len(g.anchors) >= ai + 1:
+            g.anchors[ai].selected = True
 
 def getCurrentFontAndWindowFlavor():
     """ Try to find what type the current window is and which font belongs to it."""
@@ -102,6 +111,7 @@ def setSpaceCenterWindowPosSize(font):
     rawText = c.getRaw()
     prefix = c.getPre()
     suffix = c.getAfter()
+    gnameSuffix = c.getSuffix()
     size = c.getPointSize()
     w = OpenSpaceCenter(font, newWindow=False)
     new = CurrentSpaceCenterWindow()
@@ -109,6 +119,7 @@ def setSpaceCenterWindowPosSize(font):
     w.setRaw(rawText)
     w.setPre(prefix)
     w.setAfter(suffix)
+    w.setSuffix(gnameSuffix)
     w.setPointSize(size)
 
 def getOtherMaster(nextFont=True, shuffleFont=False):
@@ -146,7 +157,7 @@ def switch(direction=1, shuffle=False):
     if windowType == "FontWindow":
         fontWindow = CurrentFontWindow()
         selectedGlyphs = f.selection
-        currentFontWindowQuery =  fontWindow.getGlyphCollection().getQuery()
+        currentFontWindowQuery = fontWindow.getGlyphCollection().getQuery()
         selectedSmartList = fontWindow.fontOverview.views.smartList.getSelection()
         posSize = fontWindow.window().getPosSize()
         nextWindow = nextMaster.document().getMainWindow()
@@ -164,7 +175,7 @@ def switch(direction=1, shuffle=False):
         setSpaceCenterWindowPosSize(nextMaster)
     elif windowType == "GlyphWindow":
         g = CurrentGlyph()
-        selectedPoints, selectedComps = copySelection(g)
+        selectedPoints, selectedComps, selectedAnchors = copySelection(g)
         currentMeasurements = g.naked().measurements
         if g is not None:
             # wrap possible UFO3 / fontparts objects
@@ -179,7 +190,7 @@ def switch(direction=1, shuffle=False):
                 AppKit.NSBeep()
                 return None
             nextGlyph = nextMaster[g.name]
-            applySelection(nextGlyph, selectedPoints, selectedComps)
+            applySelection(nextGlyph, selectedPoints, selectedComps, selectedAnchors)
             nextGlyph.naked().measurements = currentMeasurements
             if nextGlyph is not None:
                 rr = getGlyphWindowPosSize()
@@ -197,7 +208,7 @@ def switch(direction=1, shuffle=False):
         nextWindow = nextWindow.vanillaWrapper()
         g = CurrentGlyph()
         if g is not None:
-            selectedPoints, selectedComps = copySelection(g)
+            selectedPoints, selectedComps, selectedAnchors = copySelection(g)
             currentMeasurements = g.naked().measurements
             nextGlyph = nextMaster[g.name]
             #print("SingleFontWindow", fontWindow, selectedGlyphs, g, selectedPoints, currentMeasurements)
@@ -218,21 +229,23 @@ def switch(direction=1, shuffle=False):
 
         nextMaster.selection = [s for s in selectedGlyphs if s in nextMaster]
         if nextGlyph is not None:
-            applySelection(nextGlyph, selectedPoints, selectedComps)
+            applySelection(nextGlyph, selectedPoints, selectedComps, selectedAnchors)
             nextGlyph.naked().measurements = currentMeasurements
 
         rawText = fontWindow.spaceCenter.getRaw()
         prefix = fontWindow.spaceCenter.getPre()
         suffix = fontWindow.spaceCenter.getAfter()
+        gnameSuffix = fontWindow.spaceCenter.getSuffix()
         size = fontWindow.spaceCenter.getPointSize()
 
         nextWindow.spaceCenter.setRaw(rawText)
         nextWindow.spaceCenter.setPre(prefix)
         nextWindow.spaceCenter.setAfter(suffix)
+        nextWindow.spaceCenter.setSuffix(gnameSuffix)
         nextWindow.spaceCenter.setPointSize(size)
 
         for n in dir(nextWindow):
-           print(n)
+            print(n)
 
 if __name__ == "__main__":
     switch(-1)
