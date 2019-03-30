@@ -1,5 +1,4 @@
 # menuTitle : Edit That Next Master
-# shortCut : command+shift+[
     
 import importlib
 import editThatPreviousMaster

@@ -1,5 +1,4 @@
 # menuTitle : Edit That Previous Master
-# shortCut : command+shift+]
 
 """
 
@@ -26,6 +25,7 @@ import AppKit
 import random
 from mojo.UI import *
 from mojo.roboFont import CurrentFont, CurrentGlyph, AllFonts, OpenWindow, version
+from mojo.events import addObserver, removeObserver, publishEvent
 
 #import addSomeGlyphsWindow
 #reload(addSomeGlyphsWindow)
@@ -104,7 +104,7 @@ def setGlyphWindowPosSize(glyph, pos, size, animate=False, settings=None, viewFr
     if layerName is not None:
         w.setLayer(layerName, toToolbar=True)
 
-def setSpaceCenterWindowPosSize(font):
+def setSpaceCenterWindowPosSize(font, targetLayer=None):
     w = CurrentSpaceCenterWindow()
     posSize = w.window().getPosSize()
     c = w.getSpaceCenter()
@@ -113,6 +113,8 @@ def setSpaceCenterWindowPosSize(font):
     suffix = c.getAfter()
     gnameSuffix = c.getSuffix()
     size = c.getPointSize()
+    if targetLayer is None:
+        targetLayer = c.getLayerName()
     w = OpenSpaceCenter(font, newWindow=False)
     new = CurrentSpaceCenterWindow()
     new.window().setPosSize(posSize)
@@ -121,6 +123,8 @@ def setSpaceCenterWindowPosSize(font):
     w.setAfter(suffix)
     w.setSuffix(gnameSuffix)
     w.setPointSize(size)
+    if targetLayer is not None:
+        w.setLayerName(targetLayer)
 
 def getOtherMaster(nextFont=True, shuffleFont=False):
     cf = CurrentFont()
@@ -152,7 +156,22 @@ def getOtherMaster(nextFont=True, shuffleFont=False):
 
 def switch(direction=1, shuffle=False):
     currentPath, windowType = getCurrentFontAndWindowFlavor()
-    nextMaster = getOtherMaster(direction==1, shuffle==True)
+    # maybe here
+    nextMaster = None
+    nextLayer = None
+    app = AppKit.NSApp()
+    if hasattr(app, "getNextSkateboardMasterCallback"):
+        callback = app.getNextSkateboardMasterCallback
+        print('editnext callback found', callback)
+        if callback:
+            r = callback(direction, windowType)
+            #print('---', r)
+            if r is not None:
+                nextMaster, nextLayer = r
+            print('hey, got a result from skateboard', nextMaster, nextLayer)
+    if nextMaster is None:
+        nextMaster = getOtherMaster(direction==1, shuffle==True)
+        print("didn't hear from skateboard", nextMaster)
     f = CurrentFont()
     if windowType == "FontWindow":
         fontWindow = CurrentFontWindow()
@@ -172,7 +191,7 @@ def switch(direction=1, shuffle=False):
         except:
             pass
     elif windowType == "SpaceCenter":
-        setSpaceCenterWindowPosSize(nextMaster)
+        setSpaceCenterWindowPosSize(nextMaster, nextLayer)
     elif windowType == "GlyphWindow":
         g = CurrentGlyph()
         selectedPoints, selectedComps, selectedAnchors = copySelection(g)
@@ -181,7 +200,10 @@ def switch(direction=1, shuffle=False):
             # wrap possible UFO3 / fontparts objects
             if version >= "3.0":
                 # RF 3.x
-                currentLayerName = g.layer.name
+                if nextLayer is not None:
+                    currentLayerName = nextLayer
+                else:
+                    currentLayerName = g.layer.name
             else:
                 # RF 1.8.x
                 currentLayerName = g.layerName

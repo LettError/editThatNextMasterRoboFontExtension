@@ -148,10 +148,8 @@ def getOtherMaster(nextFont=True, shuffleFont=False):
             prev = fonts[sortedPaths[i-1]]
             nxt = fonts[sortedPaths[(i+1)%len(sortedPaths)]]
             if nextFont:
-                #print('next')
                 return nxt
             else:
-                #print('prev')
                 return prev
 
 def switch(direction=1, shuffle=False):
@@ -162,16 +160,12 @@ def switch(direction=1, shuffle=False):
     app = AppKit.NSApp()
     if hasattr(app, "getNextSkateboardMasterCallback"):
         callback = app.getNextSkateboardMasterCallback
-        #print('editnext callback found', callback)
         if callback:
             r = callback(direction, windowType)
-            print('callback result ', r)
             if r is not None:
                 nextMaster, nextLayer = r
-            print('hey, got a result from skateboard', nextMaster, nextLayer)
     if nextMaster is None:
         nextMaster = getOtherMaster(direction==1, shuffle==True)
-        print("didn't hear from skateboard", nextMaster)
     f = CurrentFont()
     if windowType == "FontWindow":
         fontWindow = CurrentFontWindow()
@@ -205,15 +199,11 @@ def switch(direction=1, shuffle=False):
                     # if we're jumping from a source with a layername
                     # to a source without one
                     currentLayerName = nextLayer
-                    print("--1")
                 else:
-                    #
                     currentLayerName = g.layer.name
-                    print("--2")
             else:
                 # RF 1.8.x
                 currentLayerName = g.layerName
-                print("--3")
             if not g.name in nextMaster:
                 #OpenWindow(AddSomeGlyphsWindow, f, nextMaster, g.name)
                 AppKit.NSBeep()
@@ -240,7 +230,6 @@ def switch(direction=1, shuffle=False):
             selectedPoints, selectedComps, selectedAnchors = copySelection(g)
             currentMeasurements = g.naked().measurements
             nextGlyph = nextMaster[g.name]
-            #print("SingleFontWindow", fontWindow, selectedGlyphs, g, selectedPoints, currentMeasurements)
         # copy the posSize
         posSize = fontWindow.window().getPosSize()
         nextWindow.window().setPosSize(posSize)
@@ -272,9 +261,6 @@ def switch(direction=1, shuffle=False):
         nextWindow.spaceCenter.setAfter(suffix)
         nextWindow.spaceCenter.setSuffix(gnameSuffix)
         nextWindow.spaceCenter.setPointSize(size)
-
-        for n in dir(nextWindow):
-            print(n)
 
 if __name__ == "__main__":
     #switch(-1)
