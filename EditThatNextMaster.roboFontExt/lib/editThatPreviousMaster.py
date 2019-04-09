@@ -148,10 +148,8 @@ def getOtherMaster(nextFont=True, shuffleFont=False):
             prev = fonts[sortedPaths[i-1]]
             nxt = fonts[sortedPaths[(i+1)%len(sortedPaths)]]
             if nextFont:
-                #print('next')
                 return nxt
             else:
-                #print('prev')
                 return prev
 
 def switch(direction=1, shuffle=False):
@@ -162,16 +160,12 @@ def switch(direction=1, shuffle=False):
     app = AppKit.NSApp()
     if hasattr(app, "getNextSkateboardMasterCallback"):
         callback = app.getNextSkateboardMasterCallback
-        print('editnext callback found', callback)
         if callback:
             r = callback(direction, windowType)
-            #print('---', r)
             if r is not None:
                 nextMaster, nextLayer = r
-            print('hey, got a result from skateboard', nextMaster, nextLayer)
     if nextMaster is None:
         nextMaster = getOtherMaster(direction==1, shuffle==True)
-        print("didn't hear from skateboard", nextMaster)
     f = CurrentFont()
     if windowType == "FontWindow":
         fontWindow = CurrentFontWindow()
@@ -201,6 +195,9 @@ def switch(direction=1, shuffle=False):
             if version >= "3.0":
                 # RF 3.x
                 if nextLayer is not None:
+                    # wait nextlayer can be None
+                    # if we're jumping from a source with a layername
+                    # to a source without one
                     currentLayerName = nextLayer
                 else:
                     currentLayerName = g.layer.name
@@ -233,7 +230,6 @@ def switch(direction=1, shuffle=False):
             selectedPoints, selectedComps, selectedAnchors = copySelection(g)
             currentMeasurements = g.naked().measurements
             nextGlyph = nextMaster[g.name]
-            #print("SingleFontWindow", fontWindow, selectedGlyphs, g, selectedPoints, currentMeasurements)
         # copy the posSize
         posSize = fontWindow.window().getPosSize()
         nextWindow.window().setPosSize(posSize)
@@ -266,8 +262,6 @@ def switch(direction=1, shuffle=False):
         nextWindow.spaceCenter.setSuffix(gnameSuffix)
         nextWindow.spaceCenter.setPointSize(size)
 
-        for n in dir(nextWindow):
-            print(n)
-
 if __name__ == "__main__":
-    switch(-1)
+    #switch(-1)
+    switch(1)

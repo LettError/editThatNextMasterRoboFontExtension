@@ -2,6 +2,10 @@
 # run in RF
 import os
 from mojo.extensions import ExtensionBundle
+from mojo.UI import createModifier
+
+#modifier = createModifier(command=True, shift=True)
+#print(f"({modifier}, ']')")
 
 # get current folder
 basePath = os.path.dirname(__file__)
@@ -45,7 +49,7 @@ B.name = "EditThatNextMaster"
 B.developer = 'LettError'
 
 # URL of the developer
-B.developerURL = 'http://letterror.com'
+B.developerURL = 'http://letterror.com/tools.html'
 
 if resourcesPath:
     # extension icon (file path or NSImage)
@@ -53,7 +57,7 @@ if resourcesPath:
     B.icon = imagePath
 
 # version of the extension
-B.version = '0.1'
+B.version = '1.2'
 
 # should the extension be launched at start-up?
 B.launchAtStartUp = True
@@ -73,12 +77,12 @@ B.addToMenu = [
     {
         'path' : 'editThatNextMaster.py',
         'preferredName': '⏩ Next Master',
-        'shortKey' : ']',
+        'shortKey' : (1179648, ']'),
     },
     {
         'path' : 'editThatPreviousMaster.py',
         'preferredName': '⏪ Previous Master',
-        'shortKey' : '[',
+        'shortKey' : (1179648, '['),
     },
     {
         'path' : 'editShuffle.py',

@@ -10,7 +10,10 @@
 			<key>preferredName</key>
 			<string>⏩ Next Master</string>
 			<key>shortKey</key>
-			<string>]</string>
+			<array>
+				<integer>1179648</integer>
+				<string>]</string>
+			</array>
 		</dict>
 		<dict>
 			<key>path</key>
@@ -18,7 +21,10 @@
 			<key>preferredName</key>
 			<string>⏪ Previous Master</string>
 			<key>shortKey</key>
-			<string>[</string>
+			<array>
+				<integer>1179648</integer>
+				<string>[</string>
+			</array>
 		</dict>
 		<dict>
 			<key>path</key>
@@ -32,7 +38,7 @@
 	<key>developer</key>
 	<string>LettError</string>
 	<key>developerURL</key>
-	<string>http://letterror.com</string>
+	<string>http://letterror.com/tools.html</string>
 	<key>html</key>
 	<true/>
 	<key>launchAtStartUp</key>
@@ -46,8 +52,8 @@
 	<key>requiresVersionMinor</key>
 	<string>2</string>
 	<key>timeStamp</key>
-	<real>1553880801.463516</real>
+	<real>1554843967.3725541</real>
 	<key>version</key>
-	<string>0.1</string>
+	<string>1.2</string>
 </dict>
 </plist>
