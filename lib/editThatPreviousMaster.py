@@ -157,13 +157,16 @@ def switch(direction=1, shuffle=False):
     # maybe here
     nextMaster = None
     nextLayer = None
-    app = AppKit.NSApp()
-    if hasattr(app, "getNextSkateboardMasterCallback"):
-        callback = app.getNextSkateboardMasterCallback
-        if callback:
-            r = callback(direction, windowType)
-            if r is not None:
-                nextMaster, nextLayer = r
+    try:
+        app = AppKit.NSApp()
+        if hasattr(app, "getNextSkateboardMasterCallback"):
+            callback = app.getNextSkateboardMasterCallback
+            if callback:
+                r = callback(direction, windowType)
+                if r is not None:
+                    nextMaster, nextLayer = r
+    except:
+        print("EditNext: problem calling Skateboard")
     if nextMaster is None:
         nextMaster = getOtherMaster(direction==1, shuffle==True)
     f = CurrentFont()
@@ -263,5 +266,4 @@ def switch(direction=1, shuffle=False):
         nextWindow.spaceCenter.setPointSize(size)
 
 if __name__ == "__main__":
-    #switch(-1)
-    switch(1)
+    switch(-1)
