@@ -80,7 +80,7 @@ def getCurrentFontAndWindowFlavor():
     return None, None
 
 def getGlyphWindowPosSize():
-    w = CurrentGlyphWindow()
+    oldWindow = w = CurrentGlyphWindow()
     if w is None:
         return
     x,y, width, height = w.window().getPosSize()
@@ -88,7 +88,7 @@ def getGlyphWindowPosSize():
     view = w.getGlyphView()
     viewFrame = view.visibleRect()
     viewScale = w.getGlyphViewScale()
-    return (x, y), (width, height), settings, viewFrame, viewScale
+    return (x, y), (width, height), settings, viewFrame, viewScale, oldWindow
 
 def setGlyphWindowPosSize(glyph, pos, size, animate=False, settings=None, viewFrame=None, viewScale=None, layerName=None):
     OpenGlyphWindow(glyph=glyph, newWindow=False)
@@ -105,7 +105,7 @@ def setGlyphWindowPosSize(glyph, pos, size, animate=False, settings=None, viewFr
         w.setLayer(layerName, toToolbar=True)
 
 def setSpaceCenterWindowPosSize(font, targetLayer=None):
-    w = CurrentSpaceCenterWindow()
+    oldWindow = w = CurrentSpaceCenterWindow()
     posSize = w.window().getPosSize()
     c = w.getSpaceCenter()
     rawText = c.getRaw()
@@ -125,6 +125,7 @@ def setSpaceCenterWindowPosSize(font, targetLayer=None):
     w.setPointSize(size)
     if targetLayer is not None:
         w.setLayerName(targetLayer)
+    oldWindow.close()
 
 def getOtherMaster(nextFont=True, shuffleFont=False):
     cf = CurrentFont()
@@ -217,8 +218,9 @@ def switch(direction=1, shuffle=False):
             if nextGlyph is not None:
                 rr = getGlyphWindowPosSize()
                 if rr is not None:
-                    p, s, settings, viewFrame, viewScale = rr
+                    p, s, settings, viewFrame, viewScale, oldWindow = rr
                     setGlyphWindowPosSize(nextGlyph, p, s, settings=settings, viewFrame=viewFrame, viewScale=viewScale, layerName=currentLayerName)
+                    oldWindow.close()
     elif windowType == "SingleFontWindow":
         selectedPoints = None
         selectedComps = None
