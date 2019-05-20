@@ -172,12 +172,16 @@ def switch(direction=1, shuffle=False):
     f = CurrentFont()
     if windowType == "FontWindow":
         fontWindow = CurrentFontWindow()
-        selectedGlyphs = f.selection
+        selectedGlyphs = f.selectedGlyphNames if version >= '3.2' else f.selection
         currentFontWindowQuery = fontWindow.getGlyphCollection().getQuery()
         selectedSmartList = fontWindow.fontOverview.views.smartList.getSelection()
         posSize = fontWindow.window().getPosSize()
         nextWindow = nextMaster.document().getMainWindow()
-        nextMaster.selection = [s for s in selectedGlyphs if s in nextMaster]
+        nextSelectedGlyphs = [s for s in selectedGlyphs if s in nextMaster]
+        if version >= '3.2':
+            nextMaster.selectedGlyphNames = nextSelectedGlyphs
+        else:
+            nextMaster.selection = nextSelectedGlyphs
         nextWindow.setPosSize(posSize)
         nextWindow.show()
         # set the selected smartlist
@@ -225,7 +229,7 @@ def switch(direction=1, shuffle=False):
         currentMeasurements = None
         nextGlyph = None
         fontWindow = CurrentFontWindow()
-        selectedGlyphs = f.selection
+        selectedGlyphs = f.selectedGlyphNames if version >= "3.2" else f.selection
         nextWindow = nextMaster.document().getMainWindow()
         nextWindow = nextWindow.vanillaWrapper()
         g = CurrentGlyph()
@@ -248,7 +252,12 @@ def switch(direction=1, shuffle=False):
         nextView.scrollRectToVisible_(viewFrame)
         # maybe the viewframe needs to be seen as a factor of the rect
 
-        nextMaster.selection = [s for s in selectedGlyphs if s in nextMaster]
+        nextSelectedGlyphs = [s for s in selectedGlyphs if s in nextMaster]
+        if version >= "3.0":
+            nextMaster.selectedGlyphNames = nextSelectedGlyphs
+        else:
+            nextMaster.selection = nextSelectedGlyphs
+
         if nextGlyph is not None:
             applySelection(nextGlyph, selectedPoints, selectedComps, selectedAnchors)
             nextGlyph.naked().measurements = currentMeasurements
