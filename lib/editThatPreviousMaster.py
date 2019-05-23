@@ -1,5 +1,7 @@
 # menuTitle : Edit That Previous Master
 
+import time
+
 """
 
     If you're editing masters or whatever
@@ -17,7 +19,8 @@
     @letterror
     20160930
     v6
-
+    
+    20190523
 
 """
 
@@ -157,6 +160,7 @@ def switch(direction=1, shuffle=False):
     # maybe here
     nextMaster = None
     nextLayer = None
+    currentLayerName = None
     try:
         app = AppKit.NSApp()
         if hasattr(app, "getNextSkateboardMasterCallback"):
@@ -219,10 +223,25 @@ def switch(direction=1, shuffle=False):
             applySelection(nextGlyph, selectedPoints, selectedComps, selectedAnchors)
             nextGlyph.naked().measurements = currentMeasurements
             if nextGlyph is not None:
-                rr = getGlyphWindowPosSize()
-                if rr is not None:
-                    p, s, settings, viewFrame, viewScale = rr
-                    setGlyphWindowPosSize(nextGlyph, p, s, settings=settings, viewFrame=viewFrame, viewScale=viewScale, layerName=currentLayerName)
+                if version >= "3.3":
+                    # use the 3.3 new window.setGlyph so we don't have to create a new window
+                    w = CurrentGlyphWindow()
+                    print("glyphwindow recycle! 3.3b", time.time(), w)
+                    view = w.getGlyphView()
+                    viewFrame = view.visibleRect()
+                    viewScale = w.getGlyphViewScale()
+                    w.setGlyph(nextGlyph)
+                    w.setGlyphViewScale(viewScale)
+                    view.scrollRectToVisible_(viewFrame)
+                    if currentLayerName is not None:
+                        w.setLayer(currentLayerName, toToolbar=True)
+                else:
+                    # can't set a new glyph to the same window
+                    # then make a new window and copy the state
+                    rr = getGlyphWindowPosSize()
+                    if rr is not None:
+                        p, s, settings, viewFrame, viewScale = rr
+                        setGlyphWindowPosSize(nextGlyph, p, s, settings=settings, viewFrame=viewFrame, viewScale=viewScale, layerName=currentLayerName)
     elif windowType == "SingleFontWindow":
         selectedPoints = None
         selectedComps = None
