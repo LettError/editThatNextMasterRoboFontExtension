@@ -1,5 +1,7 @@
 # menuTitle : Edit That Previous Master
 
+import time
+
 """
 
     If you're editing masters or whatever
@@ -15,9 +17,8 @@
 
     With massive help from @typemytype
     @letterror
-    20160930
-    v6
-
+    
+    20190523
 
 """
 
@@ -106,6 +107,12 @@ def setGlyphWindowPosSize(glyph, pos, size, animate=False, settings=None, viewFr
 
 def setSpaceCenterWindowPosSize(font, targetLayer=None):
     w = CurrentSpaceCenterWindow()
+    print("2 CurrentSpaceCenterWindow", id(CurrentSpaceCenterWindow))
+    g = CurrentGlyph()
+    if g is not None:
+        currentGlyphName = g.name
+    else:
+        currentGlyphName = None
     posSize = w.window().getPosSize()
     c = w.getSpaceCenter()
     rawText = c.getRaw()
@@ -115,6 +122,7 @@ def setSpaceCenterWindowPosSize(font, targetLayer=None):
     size = c.getPointSize()
     if targetLayer is None:
         targetLayer = c.getLayerName()
+    # until spaceCenter.setFont works:
     w = OpenSpaceCenter(font, newWindow=False)
     new = CurrentSpaceCenterWindow()
     new.window().setPosSize(posSize)
@@ -125,6 +133,20 @@ def setSpaceCenterWindowPosSize(font, targetLayer=None):
     w.setPointSize(size)
     if targetLayer is not None:
         w.setLayerName(targetLayer)
+    # if version >= "3.3":
+    #     current = CurrentSpaceCenterWindow()
+    #     current.setFont(font)
+    # else:
+    #     w = OpenSpaceCenter(font, newWindow=False)
+    #     new = CurrentSpaceCenterWindow()
+    #     new.window().setPosSize(posSize)
+    #     w.setRaw(rawText)
+    #     w.setPre(prefix)
+    #     w.setAfter(suffix)
+    #     w.setSuffix(gnameSuffix)
+    #     w.setPointSize(size)
+    #     if targetLayer is not None:
+    #         w.setLayerName(targetLayer)
 
 def getOtherMaster(nextFont=True, shuffleFont=False):
     cf = CurrentFont()
@@ -157,6 +179,7 @@ def switch(direction=1, shuffle=False):
     # maybe here
     nextMaster = None
     nextLayer = None
+    currentLayerName = None
     try:
         app = AppKit.NSApp()
         if hasattr(app, "getNextSkateboardMasterCallback"):
@@ -212,17 +235,34 @@ def switch(direction=1, shuffle=False):
                 # RF 1.8.x
                 currentLayerName = g.layerName
             if not g.name in nextMaster:
+                # Frank suggests:
+                #nextMaster = getOtherMaster(direction==1, shuffle==True)
                 #OpenWindow(AddSomeGlyphsWindow, f, nextMaster, g.name)
-                AppKit.NSBeep()
+                #AppKit.NSBeep()
                 return None
             nextGlyph = nextMaster[g.name]
             applySelection(nextGlyph, selectedPoints, selectedComps, selectedAnchors)
             nextGlyph.naked().measurements = currentMeasurements
             if nextGlyph is not None:
-                rr = getGlyphWindowPosSize()
-                if rr is not None:
-                    p, s, settings, viewFrame, viewScale = rr
-                    setGlyphWindowPosSize(nextGlyph, p, s, settings=settings, viewFrame=viewFrame, viewScale=viewScale, layerName=currentLayerName)
+                if version >= "3.3":
+                    # use the 3.3 new window.setGlyph so we don't have to create a new window
+                    w = CurrentGlyphWindow()
+                    print("glyphwindow recycle! 3.3b", time.time(), w)
+                    view = w.getGlyphView()
+                    viewFrame = view.visibleRect()        #    necessary?
+                    viewScale = w.getGlyphViewScale()     #    necessary?
+                    w.setGlyph(nextGlyph)
+                    w.setGlyphViewScale(viewScale)        #    necessary?
+                    view.scrollRectToVisible_(viewFrame)  #    necessary?    
+                    if currentLayerName is not None:
+                        w.setLayer(currentLayerName, toToolbar=True)
+                else:
+                    # can't set a new glyph to the same window
+                    # then make a new window and copy the state
+                    rr = getGlyphWindowPosSize()
+                    if rr is not None:
+                        p, s, settings, viewFrame, viewScale = rr
+                        setGlyphWindowPosSize(nextGlyph, p, s, settings=settings, viewFrame=viewFrame, viewScale=viewScale, layerName=currentLayerName)
     elif windowType == "SingleFontWindow":
         selectedPoints = None
         selectedComps = None

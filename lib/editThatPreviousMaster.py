@@ -17,8 +17,6 @@ import time
 
     With massive help from @typemytype
     @letterror
-    20160930
-    v6
     
     20190523
 
@@ -109,6 +107,12 @@ def setGlyphWindowPosSize(glyph, pos, size, animate=False, settings=None, viewFr
 
 def setSpaceCenterWindowPosSize(font, targetLayer=None):
     w = CurrentSpaceCenterWindow()
+    print("2 CurrentSpaceCenterWindow", id(CurrentSpaceCenterWindow))
+    g = CurrentGlyph()
+    if g is not None:
+        currentGlyphName = g.name
+    else:
+        currentGlyphName = None
     posSize = w.window().getPosSize()
     c = w.getSpaceCenter()
     rawText = c.getRaw()
@@ -118,6 +122,7 @@ def setSpaceCenterWindowPosSize(font, targetLayer=None):
     size = c.getPointSize()
     if targetLayer is None:
         targetLayer = c.getLayerName()
+    # until spaceCenter.setFont works:
     w = OpenSpaceCenter(font, newWindow=False)
     new = CurrentSpaceCenterWindow()
     new.window().setPosSize(posSize)
@@ -128,6 +133,20 @@ def setSpaceCenterWindowPosSize(font, targetLayer=None):
     w.setPointSize(size)
     if targetLayer is not None:
         w.setLayerName(targetLayer)
+    # if version >= "3.3":
+    #     current = CurrentSpaceCenterWindow()
+    #     current.setFont(font)
+    # else:
+    #     w = OpenSpaceCenter(font, newWindow=False)
+    #     new = CurrentSpaceCenterWindow()
+    #     new.window().setPosSize(posSize)
+    #     w.setRaw(rawText)
+    #     w.setPre(prefix)
+    #     w.setAfter(suffix)
+    #     w.setSuffix(gnameSuffix)
+    #     w.setPointSize(size)
+    #     if targetLayer is not None:
+    #         w.setLayerName(targetLayer)
 
 def getOtherMaster(nextFont=True, shuffleFont=False):
     cf = CurrentFont()
@@ -216,8 +235,10 @@ def switch(direction=1, shuffle=False):
                 # RF 1.8.x
                 currentLayerName = g.layerName
             if not g.name in nextMaster:
+                # Frank suggests:
+                #nextMaster = getOtherMaster(direction==1, shuffle==True)
                 #OpenWindow(AddSomeGlyphsWindow, f, nextMaster, g.name)
-                AppKit.NSBeep()
+                #AppKit.NSBeep()
                 return None
             nextGlyph = nextMaster[g.name]
             applySelection(nextGlyph, selectedPoints, selectedComps, selectedAnchors)
@@ -228,11 +249,11 @@ def switch(direction=1, shuffle=False):
                     w = CurrentGlyphWindow()
                     print("glyphwindow recycle! 3.3b", time.time(), w)
                     view = w.getGlyphView()
-                    viewFrame = view.visibleRect()
-                    viewScale = w.getGlyphViewScale()
+                    viewFrame = view.visibleRect()        #    necessary?
+                    viewScale = w.getGlyphViewScale()     #    necessary?
                     w.setGlyph(nextGlyph)
-                    w.setGlyphViewScale(viewScale)
-                    view.scrollRectToVisible_(viewFrame)
+                    w.setGlyphViewScale(viewScale)        #    necessary?
+                    view.scrollRectToVisible_(viewFrame)  #    necessary?    
                     if currentLayerName is not None:
                         w.setLayer(currentLayerName, toToolbar=True)
                 else:
