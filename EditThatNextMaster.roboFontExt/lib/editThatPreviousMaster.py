@@ -288,7 +288,7 @@ def switch(direction=1, shuffle=False):
         viewFrame = currentView.visibleRect()
         viewScale = currentView.getGlyphViewScale()
         nextView = nextWindow.getGlyphView()
-        nextWindow.setGlyphViewScale(viewScale)
+        nextWindow.setGlyphViewScale(1 / viewScale)
         nextView.scrollRectToVisible_(viewFrame)
         # maybe the viewframe needs to be seen as a factor of the rect
 
