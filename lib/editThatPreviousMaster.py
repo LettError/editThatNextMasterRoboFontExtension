@@ -28,10 +28,18 @@ from mojo.UI import *
 from mojo.roboFont import CurrentFont, CurrentGlyph, AllFonts, OpenWindow, version
 from mojo.events import addObserver, removeObserver, publishEvent
 
-#import addSomeGlyphsWindow
-#reload(addSomeGlyphsWindow)
-#from addSomeGlyphsWindow import AddSomeGlyphsWindow
-
+try:
+    from mm4.menubar import SharedMenubar
+    from mm4.mmScripting import _getMainWindowControllerForFont, MetricsMachineScriptingError
+    #mm4.mmScripting.MetricsMachineScriptingError
+    #MetricsMachineScriptingError
+    import mm4.mmScripting
+    from metricsMachine import SetPairList, SetCurrentPair
+    import metricsMachine
+    hasMetricsMachine = True
+except ImportError:
+    hasMetricsMachine = False
+    
 def copySelection(g):
     pointSelection = []
     compSelection = []
@@ -76,8 +84,17 @@ def getCurrentFontAndWindowFlavor():
             windowName = window.windowName()
             if windowName in skip:
                 continue
+            if windowName == "MetricsMachineMainWindow":
+                if hasattr(window, "windowName") and window.windowName() == "MetricsMachineMainWindow":
+                    delegate = window.delegate()
+                    mmController = delegate.vanillaWrapper()
+                    return mmController.font.path, windowName
             if hasattr(window, "document"):
-                return window.document().font.path, windowName
+                obj = window.document()
+                # could be an extension Help window
+                if obj is not None:
+                    if hasattr(obj, "font"):
+                        return obj.font.path, windowName
     return None, None
 
 def getGlyphWindowPosSize():
@@ -104,16 +121,16 @@ def setGlyphWindowPosSize(glyph, pos, size, animate=False, settings=None, viewFr
         setGlyphViewDisplaySettings(settings)
     if layerName is not None:
         w.setLayer(layerName, toToolbar=True)
-
+    
 def setSpaceCenterWindowPosSize(font, targetLayer=None):
     w = CurrentSpaceCenterWindow()
-    print("2 CurrentSpaceCenterWindow", id(CurrentSpaceCenterWindow))
     g = CurrentGlyph()
     if g is not None:
         currentGlyphName = g.name
     else:
         currentGlyphName = None
     posSize = w.window().getPosSize()
+    px, py, oldWidth, oldHeight = posSize
     c = w.getSpaceCenter()
     rawText = c.getRaw()
     prefix = c.getPre()
@@ -174,6 +191,17 @@ def getOtherMaster(nextFont=True, shuffleFont=False):
             else:
                 return prev
 
+def focusOnMetricsMachine(font):
+    try:
+        controller = _getMainWindowControllerForFont(font)
+        controller.w.makeKey()
+    except MetricsMachineScriptingError:
+        font.document().getMainWindow().show()
+        menuItem = SharedMenubar().getItem("fileOpenMetricsMachine")
+        menuItem.target().action_(None)
+        controller = _getMainWindowControllerForFont(font)
+    return controller
+
 def switch(direction=1, shuffle=False):
     currentPath, windowType = getCurrentFontAndWindowFlavor()
     # maybe here
@@ -215,8 +243,20 @@ def switch(direction=1, shuffle=False):
         except:
             pass
     elif windowType == "SpaceCenter":
+        # if version >= "3.3":
+        #     w = CurrentSpaceCenterWindow()
+        #     print('w', w.font.path)
+        #     c = w.getSpaceCenter()
+        #     c.setFont(nextMaster)
+        #     c.setLayerName(nextLayer)
+        #     print("setting font to spacecenter", time.time(), nextMaster)
+        # else:
         setSpaceCenterWindowPosSize(nextMaster, nextLayer)
     elif windowType == "GlyphWindow":
+        if nextMaster is None:
+        	print("geen next XX 1")
+        	switch(direction)
+        	return
         g = CurrentGlyph()
         selectedPoints, selectedComps, selectedAnchors = copySelection(g)
         currentMeasurements = g.naked().measurements
@@ -247,7 +287,6 @@ def switch(direction=1, shuffle=False):
                 if version >= "3.3":
                     # use the 3.3 new window.setGlyph so we don't have to create a new window
                     w = CurrentGlyphWindow()
-                    print("glyphwindow recycle! 3.3b", time.time(), w)
                     view = w.getGlyphView()
                     viewFrame = view.visibleRect()        #    necessary?
                     viewScale = w.getGlyphViewScale()     #    necessary?
@@ -313,6 +352,17 @@ def switch(direction=1, shuffle=False):
         nextWindow.spaceCenter.setAfter(suffix)
         nextWindow.spaceCenter.setSuffix(gnameSuffix)
         nextWindow.spaceCenter.setPointSize(size)
+    elif windowType == "MetricsMachineMainWindow":
+        # this handles any metricsMachine windows that might be open.
+        # copy the pairlist and the current pair to the next window
+        # maybe also adjust the window position?
+        # thanks to Tal and Frederik
+        currentPair = metricsMachine.GetCurrentPair(font=f)
+        currentList = metricsMachine.GetPairList(font=f)
+        MMcontroller = focusOnMetricsMachine(nextMaster)
+        MMcontroller.w.show()
+        metricsMachine.SetPairList(currentList, font=nextMaster)
+        metricsMachine.SetCurrentPair(currentPair, font=nextMaster)
 
 if __name__ == "__main__":
     switch(-1)
