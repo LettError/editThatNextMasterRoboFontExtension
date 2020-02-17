@@ -13,8 +13,10 @@ The default keys associated with these scripts are:
 
 This mimics the `next glyph` on `]` and `previous glyph` on `[`. But of course you should set it to whatever you're used to. 
 
-If you have Skateboard installed, ETNM will ask it for the next/previous routing.
+* If you have Skateboard installed, ETNM will ask it for the next/previous routing.
+* If you have MetricsMachine installed, ETNM will cycle through MM windows, keeping pairlist and current pair.
 
 ## History
 * v1.0 December 2018
 * v1.2 April 2019
+* v1.3 February 2020
