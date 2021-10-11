@@ -5,11 +5,7 @@ A [RoboFont](http:robofont.com) extension that makes switching glyph, space or f
 ![EditThatNextMasterIcon.png](EditThatNextMasterIcon.png)
 
 ## Default keys
-The default keys associated with these scripts are:
-
-* `⌘ ⇧ ]` : to the next master
-* `⌘ ⇧ [` : to the previous master
-* `⌘ ⇧ '` : shuffle
+Set the shortcuts for EditNext and EditPrevious in the RoboFont Preferences > ShortKeys panel. 
 
 This mimics the `next glyph` on `]` and `previous glyph` on `[`. But of course you should set it to whatever you're used to. 
 
