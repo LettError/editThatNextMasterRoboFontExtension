@@ -10,10 +10,7 @@
 			<key>preferredName</key>
 			<string>⏩ Next Master</string>
 			<key>shortKey</key>
-			<array>
-				<integer>1179648</integer>
-				<string>]</string>
-			</array>
+			<string></string>
 		</dict>
 		<dict>
 			<key>path</key>
@@ -21,10 +18,7 @@
 			<key>preferredName</key>
 			<string>⏪ Previous Master</string>
 			<key>shortKey</key>
-			<array>
-				<integer>1179648</integer>
-				<string>[</string>
-			</array>
+			<string></string>
 		</dict>
 		<dict>
 			<key>path</key>
@@ -32,7 +26,7 @@
 			<key>preferredName</key>
 			<string>⏪ Shuffle</string>
 			<key>shortKey</key>
-			<string>'</string>
+			<string></string>
 		</dict>
 	</array>
 	<key>developer</key>
@@ -52,8 +46,8 @@
 	<key>requiresVersionMinor</key>
 	<string>3</string>
 	<key>timeStamp</key>
-	<real>1633954366.0979221</real>
+	<real>1633958413.7274141</real>
 	<key>version</key>
-	<string>1.4</string>
+	<string>1.4.1</string>
 </dict>
 </plist>

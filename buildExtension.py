@@ -57,7 +57,7 @@ if resourcesPath:
     B.icon = imagePath
 
 # version of the extension
-B.version = '1.4'
+B.version = '1.4.1'
 
 # should the extension be launched at start-up?
 B.launchAtStartUp = True
@@ -77,17 +77,19 @@ B.addToMenu = [
     {
         'path' : 'editThatNextMaster.py',
         'preferredName': '⏩ Next Master',
-        'shortKey' : (1179648, ']'),
+        'shortKey' : '',
+        #'shortKey' : (1179648, ']'),
     },
     {
         'path' : 'editThatPreviousMaster.py',
         'preferredName': '⏪ Previous Master',
-        'shortKey' : (1179648, '['),
+        'shortKey' : '',
+        #'shortKey' : (1179648, '['),
     },
     {
         'path' : 'editShuffle.py',
         'preferredName': '⏪ Shuffle',
-        'shortKey' : '\'',
+        'shortKey' : '',
     },
 ]
 
