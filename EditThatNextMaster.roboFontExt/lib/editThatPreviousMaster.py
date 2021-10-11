@@ -139,31 +139,21 @@ def setSpaceCenterWindowPosSize(font, targetLayer=None):
     size = c.getPointSize()
     if targetLayer is None:
         targetLayer = c.getLayerName()
-    # until spaceCenter.setFont works:
-    w = OpenSpaceCenter(font, newWindow=False)
-    new = CurrentSpaceCenterWindow()
-    new.window().setPosSize(posSize)
-    w.setRaw(rawText)
-    w.setPre(prefix)
-    w.setAfter(suffix)
-    w.setSuffix(gnameSuffix)
-    w.setPointSize(size)
-    if targetLayer is not None:
-        w.setLayerName(targetLayer)
-    # if version >= "3.3":
-    #     current = CurrentSpaceCenterWindow()
-    #     current.setFont(font)
-    # else:
-    #     w = OpenSpaceCenter(font, newWindow=False)
-    #     new = CurrentSpaceCenterWindow()
-    #     new.window().setPosSize(posSize)
-    #     w.setRaw(rawText)
-    #     w.setPre(prefix)
-    #     w.setAfter(suffix)
-    #     w.setSuffix(gnameSuffix)
-    #     w.setPointSize(size)
-    #     if targetLayer is not None:
-    #         w.setLayerName(targetLayer)
+    if version >= "3.3":
+        current = CurrentSpaceCenterWindow()
+        current.setFont(font)
+    else:
+        # until spaceCenter.setFont works:
+        w = OpenSpaceCenter(font, newWindow=False)
+        new = CurrentSpaceCenterWindow()
+        new.window().setPosSize(posSize)
+        w.setRaw(rawText)
+        w.setPre(prefix)
+        w.setAfter(suffix)
+        w.setSuffix(gnameSuffix)
+        w.setPointSize(size)
+        if targetLayer is not None:
+            w.setLayerName(targetLayer)
 
 def getOtherMaster(nextFont=True, shuffleFont=False):
     cf = CurrentFont()
@@ -327,7 +317,7 @@ def switch(direction=1, shuffle=False):
         viewFrame = currentView.visibleRect()
         viewScale = currentView.getGlyphViewScale()
         nextView = nextWindow.getGlyphView()
-        nextWindow.setGlyphViewScale(1 / viewScale)
+        nextWindow.setGlyphViewScale(viewScale)
         nextView.scrollRectToVisible_(viewFrame)
         # maybe the viewframe needs to be seen as a factor of the rect
 
