@@ -20,3 +20,4 @@ This mimics the `next glyph` on `]` and `previous glyph` on `[`. But of course y
 * v1.0 December 2018
 * v1.2 April 2019
 * v1.3 February 2020
+* v1.4 October 2021
