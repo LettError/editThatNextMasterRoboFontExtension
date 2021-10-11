@@ -57,7 +57,7 @@ if resourcesPath:
     B.icon = imagePath
 
 # version of the extension
-B.version = '1.4.1'
+B.version = '1.4.2'
 
 # should the extension be launched at start-up?
 B.launchAtStartUp = True
@@ -75,14 +75,26 @@ B.requiresVersionMinor = '3'
 # scripts which should appear in Extensions menu
 B.addToMenu = [
     {
-        'path' : 'editThatNextMaster.py',
-        'preferredName': '⏩ Next Master',
+        'path' : 'editThatNext_sameWindow.py',
+        'preferredName': '⏩ Next',
         'shortKey' : '',
         #'shortKey' : (1179648, ']'),
     },
     {
-        'path' : 'editThatPreviousMaster.py',
-        'preferredName': '⏪ Previous Master',
+        'path' : 'editThatNext_newWindow.py',
+        'preferredName': '⏩ Next, New Window…',
+        'shortKey' : '',
+        #'shortKey' : (1179648, ']'),
+    },
+    {
+        'path' : 'editThatPrevious_sameWindow.py',
+        'preferredName': '⏪ Previous',
+        'shortKey' : '',
+        #'shortKey' : (1179648, '['),
+    },
+    {
+        'path' : 'editThatPrevious_newWindow.py',
+        'preferredName': '⏪ Previous, New Window…',
         'shortKey' : '',
         #'shortKey' : (1179648, '['),
     },

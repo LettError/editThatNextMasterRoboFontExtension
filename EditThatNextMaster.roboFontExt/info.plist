@@ -6,17 +6,33 @@
 	<array>
 		<dict>
 			<key>path</key>
-			<string>editThatNextMaster.py</string>
+			<string>editThatNext_sameWindow.py</string>
 			<key>preferredName</key>
-			<string>⏩ Next Master</string>
+			<string>⏩ Next</string>
 			<key>shortKey</key>
 			<string></string>
 		</dict>
 		<dict>
 			<key>path</key>
-			<string>editThatPreviousMaster.py</string>
+			<string>editThatNext_newWindow.py</string>
 			<key>preferredName</key>
-			<string>⏪ Previous Master</string>
+			<string>⏩ Next, New Window…</string>
+			<key>shortKey</key>
+			<string></string>
+		</dict>
+		<dict>
+			<key>path</key>
+			<string>editThatPrevious_sameWindow.py</string>
+			<key>preferredName</key>
+			<string>⏪ Previous</string>
+			<key>shortKey</key>
+			<string></string>
+		</dict>
+		<dict>
+			<key>path</key>
+			<string>editThatPrevious_newWindow.py</string>
+			<key>preferredName</key>
+			<string>⏪ Previous, New Window…</string>
 			<key>shortKey</key>
 			<string></string>
 		</dict>
@@ -46,8 +62,8 @@
 	<key>requiresVersionMinor</key>
 	<string>3</string>
 	<key>timeStamp</key>
-	<real>1633958413.7274141</real>
+	<real>1633978505.702373</real>
 	<key>version</key>
-	<string>1.4.1</string>
+	<string>1.4.2</string>
 </dict>
 </plist>

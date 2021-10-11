@@ -122,38 +122,46 @@ def setGlyphWindowPosSize(glyph, pos, size, animate=False, settings=None, viewFr
     if layerName is not None:
         w.setLayer(layerName, toToolbar=True)
     
-def setSpaceCenterWindowPosSize(font, targetLayer=None):
+def setSpaceCenterWindowPosSize(font, targetLayer=None, forceNewWindow=False):
+    if version >= "3.3" and not forceNewWindow:
+        current = CurrentSpaceCenterWindow()
+        current.setFont(font)
+        return
+
     w = CurrentSpaceCenterWindow()
     g = CurrentGlyph()
     if g is not None:
         currentGlyphName = g.name
     else:
         currentGlyphName = None
+
     posSize = w.window().getPosSize()
     px, py, oldWidth, oldHeight = posSize
     c = w.getSpaceCenter()
+
+    if targetLayer is None:
+        targetLayer = c.getLayerName()
+
     rawText = c.getRaw()
     prefix = c.getPre()
     suffix = c.getAfter()
     gnameSuffix = c.getSuffix()
     size = c.getPointSize()
-    if targetLayer is None:
-        targetLayer = c.getLayerName()
-    if version >= "3.3":
-        current = CurrentSpaceCenterWindow()
-        current.setFont(font)
+    
+    w = OpenSpaceCenter(font, newWindow=False)
+    new = CurrentSpaceCenterWindow()
+    newPosSize = new.window().getPosSize()
+    if posSize[2:] == newPosSize[2:] and posSize[:2] != newPosSize[:2]:
+        new.window().setPosSize(newPosSize)
     else:
-        # until spaceCenter.setFont works:
-        w = OpenSpaceCenter(font, newWindow=False)
-        new = CurrentSpaceCenterWindow()
         new.window().setPosSize(posSize)
-        w.setRaw(rawText)
-        w.setPre(prefix)
-        w.setAfter(suffix)
-        w.setSuffix(gnameSuffix)
-        w.setPointSize(size)
-        if targetLayer is not None:
-            w.setLayerName(targetLayer)
+    w.setRaw(rawText)
+    w.setPre(prefix)
+    w.setAfter(suffix)
+    w.setSuffix(gnameSuffix)
+    w.setPointSize(size)
+    if targetLayer is not None:
+        w.setLayerName(targetLayer)
 
 def getOtherMaster(nextFont=True, shuffleFont=False):
     cf = CurrentFont()
@@ -192,7 +200,7 @@ def focusOnMetricsMachine(font):
         controller = _getMainWindowControllerForFont(font)
     return controller
 
-def switch(direction=1, shuffle=False):
+def switch(direction=1, shuffle=False, forceNewWindow=False):
     currentPath, windowType = getCurrentFontAndWindowFlavor()
     # maybe here
     nextMaster = None
@@ -233,18 +241,9 @@ def switch(direction=1, shuffle=False):
         except:
             pass
     elif windowType == "SpaceCenter":
-        # if version >= "3.3":
-        #     w = CurrentSpaceCenterWindow()
-        #     print('w', w.font.path)
-        #     c = w.getSpaceCenter()
-        #     c.setFont(nextMaster)
-        #     c.setLayerName(nextLayer)
-        #     print("setting font to spacecenter", time.time(), nextMaster)
-        # else:
-        setSpaceCenterWindowPosSize(nextMaster, nextLayer)
+        setSpaceCenterWindowPosSize(nextMaster, nextLayer, forceNewWindow)
     elif windowType == "GlyphWindow":
         if nextMaster is None:
-        	print("geen next XX 1")
         	switch(direction)
         	return
         g = CurrentGlyph()
@@ -274,7 +273,7 @@ def switch(direction=1, shuffle=False):
             applySelection(nextGlyph, selectedPoints, selectedComps, selectedAnchors)
             nextGlyph.naked().measurements = currentMeasurements
             if nextGlyph is not None:
-                if version >= "3.3":
+                if version >= "3.3" and not forceNewWindow:
                     # use the 3.3 new window.setGlyph so we don't have to create a new window
                     w = CurrentGlyphWindow()
                     view = w.getGlyphView()
