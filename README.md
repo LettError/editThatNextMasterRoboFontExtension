@@ -5,9 +5,7 @@ A [RoboFont](http:robofont.com) extension that makes switching glyph, space or f
 ![EditThatNextMasterIcon.png](EditThatNextMasterIcon.png)
 
 ## Default keys
-Set the shortcuts for EditNext and EditPrevious in the RoboFont Preferences > ShortKeys panel. 
-
-This mimics the `next glyph` on `]` and `previous glyph` on `[`. But of course you should set it to whatever you're used to. 
+Set the shortcuts for EditNext and EditPrevious to your own preferred values in the RoboFont Preferences > ShortKeys panel. 
 
 * If you have Skateboard installed, ETNM will ask it for the next/previous routing.
 * If you have MetricsMachine installed, ETNM will cycle through MM windows, keeping pairlist and current pair.
