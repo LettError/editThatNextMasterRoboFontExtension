@@ -244,8 +244,8 @@ def switch(direction=1, shuffle=False, forceNewWindow=False):
         setSpaceCenterWindowPosSize(nextMaster, nextLayer, forceNewWindow)
     elif windowType == "GlyphWindow":
         if nextMaster is None:
-        	switch(direction)
-        	return
+            switch(direction)
+            return
         g = CurrentGlyph()
         selectedPoints, selectedComps, selectedAnchors = copySelection(g)
         currentMeasurements = g.naked().measurements
@@ -314,7 +314,7 @@ def switch(direction=1, shuffle=False, forceNewWindow=False):
         # set the viewscale
         currentView = fontWindow.getGlyphView()
         viewFrame = currentView.visibleRect()
-        viewScale = currentView.getGlyphViewScale()
+        viewScale = fontWindow.getGlyphViewScale()
         nextView = nextWindow.getGlyphView()
         nextWindow.setGlyphViewScale(viewScale)
         nextView.scrollRectToVisible_(viewFrame)

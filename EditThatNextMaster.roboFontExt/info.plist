@@ -58,12 +58,12 @@
 	<key>name</key>
 	<string>EditThatNextMaster</string>
 	<key>requiresVersionMajor</key>
-	<string>3</string>
+	<string>4</string>
 	<key>requiresVersionMinor</key>
 	<string>3</string>
 	<key>timeStamp</key>
-	<real>1633978505.702373</real>
+	<real>1673304005.7208109</real>
 	<key>version</key>
-	<string>1.4.2</string>
+	<string>1.4.3</string>
 </dict>
 </plist>
