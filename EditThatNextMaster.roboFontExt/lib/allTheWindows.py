@@ -346,12 +346,22 @@ def switch(direction=1, shuffle=False, forceNewWindow=False):
         # copy the pairlist and the current pair to the next window
         # maybe also adjust the window position?
         # thanks to Tal and Frederik
+        pointSizes = [50, 75, 100, 125, 150, 200, 250, 300, 350, 400, 450, 500]
+
         currentPair = metricsMachine.GetCurrentPair(font=f)
         currentList = metricsMachine.GetPairList(font=f)
         MMcontroller = focusOnMetricsMachine(nextMaster)
         MMcontroller.w.show()
         metricsMachine.SetPairList(currentList, font=nextMaster)
         metricsMachine.SetCurrentPair(currentPair, font=nextMaster)
+
+        MMcontroller.pairList.setSelection(currentPair)
+
+        otherMMcontroller = focusOnMetricsMachine(f)
+        pointSize = otherMMcontroller.editView.pairView.getPointSize()
+
+        if pointSize in pointSizes:
+            MMcontroller.editView.pairView.setPointSize(pointSize)
 
 if __name__ == "__main__":
     switch(-1)
