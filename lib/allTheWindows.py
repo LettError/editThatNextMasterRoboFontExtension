@@ -34,11 +34,16 @@ try:
     #mm4.mmScripting.MetricsMachineScriptingError
     #MetricsMachineScriptingError
     import mm4.mmScripting
-    from metricsMachine import SetPairList, SetCurrentPair
+    from metricsMachine import SetPairList, SetCurrentPair, SetPreviewText
     import metricsMachine
     hasMetricsMachine = True
 except ImportError:
     hasMetricsMachine = False
+try:
+    ds = CurrentDesignspace()
+    hasDSE = True
+except:
+    hasDSE = False
     
 def copySelection(g):
     pointSelection = []
@@ -350,10 +355,12 @@ def switch(direction=1, shuffle=False, forceNewWindow=False):
 
         currentPair = metricsMachine.GetCurrentPair(font=f)
         currentList = metricsMachine.GetPairList(font=f)
+        currentPreviewText = metricsMachine.GetPreviewText(font=f)
         MMcontroller = focusOnMetricsMachine(nextMaster)
         MMcontroller.w.show()
         metricsMachine.SetPairList(currentList, font=nextMaster)
         metricsMachine.SetCurrentPair(currentPair, font=nextMaster)
+        metricsMachine.SetPreviewText(currentPreviewText)
 
         MMcontroller.pairList.setSelection(currentPair)
 
