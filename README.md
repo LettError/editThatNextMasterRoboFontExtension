@@ -15,3 +15,4 @@ Set the shortcuts for EditNext and EditPrevious to your own preferred values in 
 * v1.2 April 2019
 * v1.3 February 2020
 * v1.4 October 2021
+* v1.5 April 2025

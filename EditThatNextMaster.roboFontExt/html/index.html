@@ -29,17 +29,17 @@ li{
 <img src="icon.png">
 
 <h1>LettError EditThatNextMaster</h1>
-<p>Current release 1.4, October 2021</p>
+<p>Current release 1.5, April 2025</p>
 
 <p>
-This tool switches quickly between masters. Default keyboard settings to cmd-shift-[ and cmd-shift-].</p>
+This tool switches quickly between UFOs and their various windows. Default keyboard settings to cmd-shift-[ and cmd-shift-].</p>
 
 <h2>Services</h2>
 <p>
 <ul>
 	<li>Glyph Window: maintains window size, position, layer, zoom and selection.</li>
-	<li>Font Window: maintains window size, position and selection</li>
-	<li>Space Center: maintains window size, position and the selected glyphs</li>
+	<li>Font Window: maintains window size, position and glyph selection</li>
+	<li>Space Center: maintains window size, position, display attributes, the glyphs on show as well as the pre and post glyphs.</li>
 	<li>Single Window Mode</li>
 </ul>
 </p>
@@ -51,14 +51,15 @@ This tool switches quickly between masters. Default keyboard settings to cmd-shi
 </ul>
 </p>
 
-<h2>Skateboard</h2>
-<p>
-With the Skateboard extension installed and a designspace file open, EditThatNextMaster will cycle between the available masters in the document.
-</p>
-
 <h2>MetricsMachine</h2>
 <p>
 With the MetricsMachine extension installed, if the front window is a Metricsmachine window, EditThatNextMaster will select or open a MetricsMachine window for the next master. It will also copy the pair list and set the current pair. 
 </p>
+
+<h2>Note</h2>
+<p>
+	ETNM stops if the next UFO in line does not have the glyph we're looking at. We can't make a new (empty) glyph because that can propagate one glyph to UFOs that don't necessarily need it.
+</p>
+
     </body>
 </html>

@@ -19,20 +19,20 @@ import time
     @letterror
     
     20190523
+    
+    20250419 v1.5 Fix issue with SmartSets and selection, clean up Font Window switcher.
 
 """
 
 import AppKit
 import random
 from mojo.UI import *
-from mojo.roboFont import CurrentFont, CurrentGlyph, AllFonts, OpenWindow, version
+from mojo.roboFont import CurrentFont, CurrentGlyph, AllFonts, OpenWindow
 from mojo.events import addObserver, removeObserver, publishEvent
 
 try:
     from mm4.menubar import SharedMenubar
     from mm4.mmScripting import _getMainWindowControllerForFont, MetricsMachineScriptingError
-    #mm4.mmScripting.MetricsMachineScriptingError
-    #MetricsMachineScriptingError
     import mm4.mmScripting
     from metricsMachine import SetPairList, SetCurrentPair, SetPreviewText
     import metricsMachine
@@ -207,7 +207,6 @@ def focusOnMetricsMachine(font):
 
 def switch(direction=1, shuffle=False, forceNewWindow=False):
     currentPath, windowType = getCurrentFontAndWindowFlavor()
-    # maybe here
     nextMaster = None
     nextLayer = None
     currentLayerName = None
@@ -226,25 +225,15 @@ def switch(direction=1, shuffle=False, forceNewWindow=False):
     f = CurrentFont()
     if windowType == "FontWindow":
         fontWindow = CurrentFontWindow()
-        selectedGlyphs = f.selectedGlyphNames if version >= '3.2' else f.selection
+        selectedGlyphs = f.selectedGlyphNames
         currentFontWindowQuery = fontWindow.getGlyphCollection().getQuery()
-        selectedSmartList = fontWindow.fontOverview.views.smartList.getSelection()
-        posSize = fontWindow.window().getPosSize()
-        nextWindow = nextMaster.document().getMainWindow()
-        nextSelectedGlyphs = [s for s in selectedGlyphs if s in nextMaster]
-        if version >= '3.2':
-            nextMaster.selectedGlyphNames = nextSelectedGlyphs
-        else:
-            nextMaster.selection = nextSelectedGlyphs
-        nextWindow.setPosSize(posSize)
-        nextWindow.show()
-        # set the selected smartlist
-        fontWindow = CurrentFontWindow()
-        try:
-            fontWindow.fontOverview.views.smartList.setSelection(selectedSmartList)
-            fontWindow.getGlyphCollection().setQuery(currentFontWindowQuery)    # sorts but does not fill it in the form
-        except:
-            pass
+        selectedSmartList = fontWindow.fontOverview.views.smartList.getSelection()        
+        w1 = f.fontWindow()
+        w2 = nextMaster.fontWindow()
+        w2.fontOverview.views.smartList.setSelection(selectedSmartList)
+        nextMaster.selectedGlyphNames = selectedGlyphs
+        w2.window().setPosSize(w1.window().getPosSize())
+        w2.window().show()        
     elif windowType == "SpaceCenter":
         setSpaceCenterWindowPosSize(nextMaster, nextLayer, forceNewWindow)
     elif windowType == "GlyphWindow":
@@ -256,53 +245,39 @@ def switch(direction=1, shuffle=False, forceNewWindow=False):
         currentMeasurements = g.naked().measurements
         if g is not None:
             # wrap possible UFO3 / fontparts objects
-            if version >= "3.0":
-                # RF 3.x
-                if nextLayer is not None:
-                    # wait nextlayer can be None
-                    # if we're jumping from a source with a layername
-                    # to a source without one
-                    currentLayerName = nextLayer
-                else:
-                    currentLayerName = g.layer.name
+            if nextLayer is not None:
+                # wait nextlayer can be None
+                # if we're jumping from a source with a layername
+                # to a source without one
+                currentLayerName = nextLayer
             else:
-                # RF 1.8.x
-                currentLayerName = g.layerName
+                currentLayerName = g.layer.name
             if not g.name in nextMaster:
                 # Frank suggests:
                 #nextMaster = getOtherMaster(direction==1, shuffle==True)
                 #OpenWindow(AddSomeGlyphsWindow, f, nextMaster, g.name)
-                #AppKit.NSBeep()
+                AppKit.NSBeep()
                 return None
             nextGlyph = nextMaster[g.name]
             applySelection(nextGlyph, selectedPoints, selectedComps, selectedAnchors)
             nextGlyph.naked().measurements = currentMeasurements
             if nextGlyph is not None:
-                if version >= "3.3" and not forceNewWindow:
-                    # use the 3.3 new window.setGlyph so we don't have to create a new window
-                    w = CurrentGlyphWindow()
-                    view = w.getGlyphView()
-                    viewFrame = view.visibleRect()        #    necessary?
-                    viewScale = w.getGlyphViewScale()     #    necessary?
-                    w.setGlyph(nextGlyph)
-                    w.setGlyphViewScale(viewScale)        #    necessary?
-                    view.scrollRectToVisible_(viewFrame)  #    necessary?    
-                    if currentLayerName is not None:
-                        w.setLayer(currentLayerName, toToolbar=True)
-                else:
-                    # can't set a new glyph to the same window
-                    # then make a new window and copy the state
-                    rr = getGlyphWindowPosSize()
-                    if rr is not None:
-                        p, s, settings, viewFrame, viewScale = rr
-                        setGlyphWindowPosSize(nextGlyph, p, s, settings=settings, viewFrame=viewFrame, viewScale=viewScale, layerName=currentLayerName)
+                w = CurrentGlyphWindow()
+                view = w.getGlyphView()
+                viewFrame = view.visibleRect()        #    necessary?
+                viewScale = w.getGlyphViewScale()     #    necessary?
+                w.setGlyph(nextGlyph)
+                w.setGlyphViewScale(viewScale)        #    necessary?
+                view.scrollRectToVisible_(viewFrame)  #    necessary?    
+                if currentLayerName is not None:
+                    w.setLayer(currentLayerName, toToolbar=True)
     elif windowType == "SingleFontWindow":
         selectedPoints = None
         selectedComps = None
         currentMeasurements = None
         nextGlyph = None
         fontWindow = CurrentFontWindow()
-        selectedGlyphs = f.selectedGlyphNames if version >= "3.2" else f.selection
+        selectedGlyphs = f.selectedGlyphNames
         nextWindow = nextMaster.document().getMainWindow()
         nextWindow = nextWindow.vanillaWrapper()
         g = CurrentGlyph()
@@ -326,10 +301,7 @@ def switch(direction=1, shuffle=False, forceNewWindow=False):
         # maybe the viewframe needs to be seen as a factor of the rect
 
         nextSelectedGlyphs = [s for s in selectedGlyphs if s in nextMaster]
-        if version >= "3.0":
-            nextMaster.selectedGlyphNames = nextSelectedGlyphs
-        else:
-            nextMaster.selection = nextSelectedGlyphs
+        nextMaster.selectedGlyphNames = nextSelectedGlyphs
 
         if nextGlyph is not None:
             applySelection(nextGlyph, selectedPoints, selectedComps, selectedAnchors)
