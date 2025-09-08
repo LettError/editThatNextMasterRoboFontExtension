@@ -60,6 +60,7 @@ def copySelection(g):
 
 def applySelection(g, pointSelection, compSelection, anchorSelection):
     # reset current selected points
+    g.deselect()
     for ci, c in enumerate(g.contours):
         c.selected = False
     for ci, c in enumerate(g.components):
@@ -194,6 +195,7 @@ def getOtherMaster(nextFont=True, shuffleFont=False):
 def focusOnMetricsMachine(font):
     try:
         controller = _getMainWindowControllerForFont(font)
+        #print('controller', controller, type(controller))
         controller.w.makeKey()
     except MetricsMachineScriptingError:
         font.document().getMainWindow().show()
@@ -202,7 +204,11 @@ def focusOnMetricsMachine(font):
         controller = _getMainWindowControllerForFont(font)
     return controller
 
+
+
 def switch(direction=1, shuffle=False, forceNewWindow=False):
+    log = []
+    log.append(f"ETNM: switch to {direction}")
     currentPath, windowType = getCurrentFontAndWindowFlavor()
     # maybe here
     nextMaster = None
@@ -216,12 +222,16 @@ def switch(direction=1, shuffle=False, forceNewWindow=False):
                 r = callback(direction, windowType)
                 if r is not None:
                     nextMaster, nextLayer = r
+        log.append(f"ETNM: Skateboard callback.")
     except:
-        print("EditNext: problem calling Skateboard")
+        log.append(f"ETNM: No Skateboard.")
     if nextMaster is None:
         nextMaster = getOtherMaster(direction==1, shuffle==True)
+    log.append(f"ETNM: next will be to {nextMaster}")
     f = CurrentFont()
+    log.append(f"ETNM: current font {f}")
     if windowType == "FontWindow":
+        log.append(f"ETNM: Switch Font Window")
         fontWindow = CurrentFontWindow()
         selectedGlyphs = f.selectedGlyphNames
         currentFontWindowQuery = fontWindow.getGlyphCollection().getQuery()
@@ -239,15 +249,19 @@ def switch(direction=1, shuffle=False, forceNewWindow=False):
         except:
             pass
     elif windowType == "SpaceCenter":
+        log.append(f"ETNM: Switch Space Center")
         setSpaceCenterWindowPosSize(nextMaster, nextLayer, forceNewWindow)
     elif windowType == "GlyphWindow":
+        log.append(f"ETNM: Switch Glyph Editor")
         if nextMaster is None:
+            log.append(f"ETNM: No next source")
             switch(direction)
             return
         g = CurrentGlyph()
         selectedPoints, selectedComps, selectedAnchors = copySelection(g)
         currentMeasurements = g.naked().measurements
         if g is not None:
+            log.append(f"ETNM: Currentglyph {g.name}")
             # wrap possible UFO3 / fontparts objects
             if version >= "3.0":
                 # RF 3.x
@@ -261,13 +275,18 @@ def switch(direction=1, shuffle=False, forceNewWindow=False):
             else:
                 # RF 1.8.x
                 currentLayerName = g.layerName
+            log.append(f"ETNM: Current layer {currentLayerName}")
             if not g.name in nextMaster:
+                log.append(f"ETNM: {g.name} not in next source...")
                 # Frank suggests:
                 #nextMaster = getOtherMaster(direction==1, shuffle==True)
                 #OpenWindow(AddSomeGlyphsWindow, f, nextMaster, g.name)
                 #AppKit.NSBeep()
+                print("\n".join(log))
+                # call window
                 return None
             nextGlyph = nextMaster[g.name]
+            log.append(f"ETNM: next glyph will be {nextGlyph}")
             applySelection(nextGlyph, selectedPoints, selectedComps, selectedAnchors)
             nextGlyph.naked().measurements = currentMeasurements
             if nextGlyph is not None:
@@ -290,6 +309,7 @@ def switch(direction=1, shuffle=False, forceNewWindow=False):
                         p, s, settings, viewFrame, viewScale = rr
                         setGlyphWindowPosSize(nextGlyph, p, s, settings=settings, viewFrame=viewFrame, viewScale=viewScale, layerName=currentLayerName)
     elif windowType == "SingleFontWindow":
+        log.append(f"ETNM: Switch Single Window Mode {windowType}")
         selectedPoints = None
         selectedComps = None
         currentMeasurements = None
@@ -303,6 +323,7 @@ def switch(direction=1, shuffle=False, forceNewWindow=False):
             selectedPoints, selectedComps, selectedAnchors = copySelection(g)
             currentMeasurements = g.naked().measurements
             nextGlyph = nextMaster[g.name]
+            log.append(f"ETNM: SFW Next glyph will be {nextGlyph}")
         # copy the posSize
         posSize = fontWindow.window().getPosSize()
         nextWindow.window().setPosSize(posSize)
@@ -340,26 +361,34 @@ def switch(direction=1, shuffle=False, forceNewWindow=False):
         nextWindow.spaceCenter.setSuffix(gnameSuffix)
         nextWindow.spaceCenter.setPointSize(size)
     elif windowType == "MetricsMachineMainWindow":
+
         # this handles any metricsMachine windows that might be open.
         # copy the pairlist and the current pair to the next window
         # maybe also adjust the window position?
         # thanks to Tal and Frederik
+        log.append(f"ETNM: MetricsMachineMainWindow")
         pointSizes = [50, 75, 100, 125, 150, 200, 250, 300, 350, 400, 450, 500]
 
+        # first retrieve the pointsize
+        otherMMcontroller = focusOnMetricsMachine(f)
+        pointSize = otherMMcontroller.editView.pairView.getPointSize()
+
+        # then focus on the new font
         currentPair = metricsMachine.GetCurrentPair(font=f)
         currentList = metricsMachine.GetPairList(font=f)
         MMcontroller = focusOnMetricsMachine(nextMaster)
         MMcontroller.w.show()
+        MMcontroller.w.makeMain()
         metricsMachine.SetPairList(currentList, font=nextMaster)
         metricsMachine.SetCurrentPair(currentPair, font=nextMaster)
 
         MMcontroller.pairList.setSelection(currentPair)
 
-        otherMMcontroller = focusOnMetricsMachine(f)
-        pointSize = otherMMcontroller.editView.pairView.getPointSize()
 
         if pointSize in pointSizes:
             MMcontroller.editView.pairView.setPointSize(pointSize)
+    
+    return "\n".join(log)
 
 if __name__ == "__main__":
-    switch(-1)
+    print(switch(1))
