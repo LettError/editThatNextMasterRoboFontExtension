@@ -17,7 +17,7 @@ import time
 
     With massive help from @typemytype
     @letterror
-    
+
     20190523
 
     20250419 v1.5 Fix issue with SmartSets and selection, clean up Font Window switcher.
@@ -41,7 +41,7 @@ try:
     hasMetricsMachine = True
 except ImportError:
     hasMetricsMachine = False
-    
+
 def copySelection(g):
     pointSelection = []
     compSelection = []
@@ -124,7 +124,7 @@ def setGlyphWindowPosSize(glyph, pos, size, animate=False, settings=None, viewFr
         setGlyphViewDisplaySettings(settings)
     if layerName is not None:
         w.setLayer(layerName, toToolbar=True)
-    
+
 def setSpaceCenterWindowPosSize(font, targetLayer=None, forceNewWindow=False):
     if version >= "3.3" and not forceNewWindow:
         current = CurrentSpaceCenterWindow()
@@ -150,7 +150,7 @@ def setSpaceCenterWindowPosSize(font, targetLayer=None, forceNewWindow=False):
     suffix = c.getAfter()
     gnameSuffix = c.getSuffix()
     size = c.getPointSize()
-    
+
     w = OpenSpaceCenter(font, newWindow=False)
     new = CurrentSpaceCenterWindow()
     newPosSize = new.window().getPosSize()
@@ -235,13 +235,13 @@ def switch(direction=1, shuffle=False, forceNewWindow=False):
         fontWindow = CurrentFontWindow()
         selectedGlyphs = f.selectedGlyphNames
         currentFontWindowQuery = fontWindow.getGlyphCollection().getQuery()
-        selectedSmartList = fontWindow.fontOverview.views.smartList.getSelection()        
+        selectedSmartList = fontWindow.fontOverview.views.smartList.getSelection()
         w1 = f.fontWindow()
         w2 = nextMaster.fontWindow()
         w2.fontOverview.views.smartList.setSelection(selectedSmartList)
         nextMaster.selectedGlyphNames = selectedGlyphs
         w2.window().setPosSize(w1.window().getPosSize())
-        w2.window().show()        
+        w2.window().show()
         currentFontWindowQuery = fontWindow.getGlyphCollection().getQuery()
         try:
             w2.fontOverview.views.smartList.setSelection(selectedSmartList)
@@ -298,7 +298,7 @@ def switch(direction=1, shuffle=False, forceNewWindow=False):
                     viewScale = w.getGlyphViewScale()     #    necessary?
                     w.setGlyph(nextGlyph)
                     w.setGlyphViewScale(viewScale)        #    necessary?
-                    view.scrollRectToVisible_(viewFrame)  #    necessary?    
+                    view.scrollRectToVisible_(viewFrame)  #    necessary?
                     if currentLayerName is not None:
                         w.setLayer(currentLayerName, toToolbar=True)
                 else:
@@ -387,7 +387,7 @@ def switch(direction=1, shuffle=False, forceNewWindow=False):
 
         if pointSize in pointSizes:
             MMcontroller.editView.pairView.setPointSize(pointSize)
-    
+
     return "\n".join(log)
 
 if __name__ == "__main__":

@@ -22,13 +22,13 @@ if not os.path.exists(htmlPath):
 resourcesPath = os.path.join(basePath, 'resources')
 if not os.path.exists(resourcesPath):
     resourcesPath = None
-    
+
 # load license text from file
 # see http://choosealicense.com/ for more open-source licenses
 licensePath = os.path.join(basePath, 'license.txt')
 if not os.path.exists(licensePath):
     licensePath = None
-    
+
 # boolean indicating if only .pyc should be included
 pycOnly = False
 
