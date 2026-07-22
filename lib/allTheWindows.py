@@ -168,15 +168,17 @@ def setSpaceCenterWindowPosSize(font, targetLayer=None, forceNewWindow=False):
 
 def getOtherMaster(nextFont=True, shuffleFont=False):
     cf = CurrentFont()
-    orderedFonts = []
     fonts = {}
-    for f in AllFonts():
+    for i, f in enumerate(AllFonts()):
         if f.path is None:
-            continue
-        fonts[f.path]=f
+            # make sure that "path" sorts at the back
+            fonts[f'{chr(0xffff)}_{i}']=f
+        else:
+            fonts[f.path]=f
     sortedPaths = list(fonts.keys())
     sortedPaths.sort()
-    #
+    print(sortedPaths)
+
     if shuffleFont:
         shufflePaths = sortedPaths[:]
         shufflePaths.remove(cf.path)
