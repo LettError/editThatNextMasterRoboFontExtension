@@ -177,7 +177,6 @@ def getOtherMaster(nextFont=True, shuffleFont=False):
             fonts[f.path]=f
     sortedPaths = list(fonts.keys())
     sortedPaths.sort()
-    print(sortedPaths)
 
     if shuffleFont:
         shufflePaths = sortedPaths[:]
