@@ -29,9 +29,6 @@ licensePath = os.path.join(basePath, 'license.txt')
 if not os.path.exists(licensePath):
     licensePath = None
 
-# boolean indicating if only .pyc should be included
-pycOnly = False
-
 # name of the compiled extension file
 extensionFile = 'EditThatNextMaster.roboFontExt'
 
@@ -57,7 +54,7 @@ if resourcesPath:
     B.icon = imagePath
 
 # version of the extension
-B.version = '1.5.4'
+B.version = '1.5.5'
 
 # should the extension be launched at start-up?
 B.launchAtStartUp = True
@@ -112,7 +109,7 @@ if licensePath:
 
 # compile and save the extension bundle
 print('building extension...', end=' ')
-B.save(extensionPath, libPath=libPath, htmlPath=htmlPath, resourcesPath=resourcesPath, pycOnly=pycOnly)
+B.save(extensionPath, libFolder=libPath, htmlFolder=htmlPath, resourcesPath=resourcesPath)
 print('done!')
 
 # check for problems in the compiled extension
